@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Creating Task</h1>
+{% if msg %}
+<h2>{{msg}}</h2>
+{% endif %}
+
+<form action="/tasks/create/" method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button>
+        Save
+    </button>
+</form>
+
+{% endblock %}
