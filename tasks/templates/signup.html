@@ -1,23 +1,59 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
 
-{% block content %}
+<main class="container py-5">
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <section class="card card-body">
+        <h1 class="text-center">Signup</h1>
 
-<h1>
-    Signup
-</h1>
+        {% if msg %}
+        <span>
+          <h2>{{msg}}</h2>
+        </span>
+        {% endif %}
 
-{% if msg %}
-<article>
-    <h2>{{msg}}</h2>
-</article>
-{% endif %}
+        <form action="{% url 'signup' %}" method="post">
+          {% csrf_token %}
+          <!-- {{form.as_p}} -->
 
-<form action="/signup/" method="post">
-    {% csrf_token %}
-    {{form.as_p}}
-    <button>
-        Signup
-    </button>
-</form>
+          <div class="mb-3">
+            <label class="w-100">
+              Username:
+              <input
+                name="username"
+                type="text"
+                placeholder="Writer your username"
+                class="form-control mt-1"
+              />
+            </label>
+          </div>
+          <div class="mb-3">
+            <label class="w-100">
+              Password:
+              <input
+                name="password1"
+                type="password"
+                placeholder="Writer your password"
+                class="form-control mt-1"
+              />
+            </label>
+          </div>
+          <div class="mb-3">
+            <label class="w-100">
+              Confirm your Password:
+              <input
+                name="password2"
+                type="password"
+                placeholder="Writer your password"
+                class="form-control mt-1"
+              />
+            </label>
+          </div>
+          <button class="btn btn-primary w-100">Signup</button>
+        </form>
+      </section>
+    </div>
+  </div>
+</main>
 
 {% endblock %}

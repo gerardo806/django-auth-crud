@@ -41,7 +41,8 @@ def signup(request):
 @login_required
 def tasks(request):
     tasks = Task.objects.filter(user=request.user, datecompleted__isnull=True)
-    return render(request, "tasks.html", {"tasks": tasks})
+    pending = True
+    return render(request, "tasks.html", {"tasks": tasks, "pending": pending})
 
 
 @login_required

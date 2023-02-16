@@ -1,23 +1,44 @@
 {% extends "base.html" %} {% block content %}
 
-<h1>Tasks Pending</h1>
-<section>
-  <ul>
-    {% for task in tasks %}
-    <li>
-      {% if task.important %}
-      <strong>{{task.title}}</strong>
-      {% else %}
-      <p>{{task.title}}</p>
-      {% endif %}
-      <p>{{task.description}}</p>
-      <p>{{task.user.username}}</p>
-      <p>{{task.datecompleted|date:'M j Y: i'}}</p>
-      <a href="/tasks/{{task.id}}">Editar</a>
-    </li>
-    <br />
-    {% endfor %}
-  </ul>
-</section>
+<main class="container py-5">
+  <div class="row">
+    <section class="col-md-6 offset-md-3">
+      <h1 class="text-center display-3 py-3">
+        Tasks {% if pending %} Pending {% else %} Completed {% endif %}
+      </h1>
+      <div class="list-group">
+        {% for task in tasks %}
+        <article class="list-group-item">
+          <header class="d-flex justify-content-between">
+            {% if task.important %}
+            <h2 class="fw-bold text-success">{{task.title}}</h2>
+            {% else %}
+            <h2 class="fw-bold">{{task.title}}</h2>
+            {% endif %}
+            <p>{{task.user.username}}</p>
+          </header>
+          <p>{{task.description}}</p>
+          <p>{{task.datecompleted|date:'M j Y: i'}}</p>
+          <footer class="d-flex justify-content-between">
+            <a class="btn btn-primary" href="{% url 'task_detail' task.id %}"
+              >Editar</a
+            >
+            <form action="{% url 'complete_task' task.id %}" method="post">
+              {% csrf_token %}
+              <button class="btn btn-secondary">complete</button>
+            </form>
+
+            <form action="{% url 'delete_task' task.id %}" method="post">
+              {% csrf_token %}
+              <button class="btn btn-danger">delete</button>
+            </form>
+          </footer>
+        </article>
+        <br />
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</main>
 
 {% endblock %}
