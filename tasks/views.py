@@ -39,6 +39,11 @@ def signup(request):
 
 
 @login_required
+def profile(request):
+    return render(request, "profile.html")
+
+
+@login_required
 def tasks(request):
     tasks = Task.objects.filter(user=request.user, datecompleted__isnull=True)
     pending = True
