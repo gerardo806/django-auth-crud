@@ -1,6 +1,22 @@
 {% extends 'base.html' %} {% block content %}
 
-<h1>Task Details</h1>
-<h2>{{task.title}}</h2>
+<section>
+  <h1>Task of {{user}}</h1>
+  {% if error %}
+  <h4>{{error}}</h4>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %} {{form.as_p}}
+    <button>Update</button>
+  </form>
+  <form action="{% url 'complete_task' task.id %}" method="post">
+    {% csrf_token %}
+    <button>complete</button>
+  </form>
+  <form action="{% url 'delete_task' task.id %}" method="post">
+    {% csrf_token %}
+    <button>delete</button>
+  </form>
+</section>
 
 {% endblock %}

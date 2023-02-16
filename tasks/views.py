@@ -6,6 +6,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from .forms import TaskForm
 from .models import Task
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -36,18 +38,62 @@ def signup(request):
     return render(request, "signup.html", {"form": UserCreationForm, "msg": msg})
 
 
+@login_required
 def tasks(request):
     tasks = Task.objects.filter(user=request.user, datecompleted__isnull=True)
     return render(request, "tasks.html", {"tasks": tasks})
 
 
+@login_required
+def tasks_completed(request):
+    tasks = Task.objects.filter(
+        user=request.user, datecompleted__isnull=False
+    ).order_by("-datecompleted")
+    return render(request, "tasks.html", {"tasks": tasks})
+
+
+@login_required
 def task_detail(request, task_id):
-    # pk: primary key
-    # obtener un registro o enviar un 404 -> get_object_or_404
-    task = get_object_or_404(Task, pk=task_id)
-    return render(request, "task_detail.html", {"task": task})
+    try:
+        # pk: primary key
+        # obtener un registro o enviar un 404 -> get_object_or_404
+        task = get_object_or_404(Task, pk=task_id, user=request.user)
+
+        if request.method == "GET":
+            form = TaskForm(instance=task)
+            return render(request, "task_detail.html", {"task": task, "form": form})
+
+        if request.method == "POST":
+            form = TaskForm(request.POST, instance=task)
+            form.save()
+
+        return redirect("tasks")
+
+    except ValueError:
+        err = "Error updating task..."
+        return render(
+            request, "task_detail.html", {"task": task, "form": form, "error": err}
+        )
 
 
+@login_required
+def complete_task(request, task_id):
+    task = get_object_or_404(Task, pk=task_id, user=request.user)
+    if request.method == "POST":
+        task.datecompleted = timezone.now()
+        task.save()
+        return redirect("tasks")
+
+
+@login_required
+def delete_task(request, task_id):
+    task = get_object_or_404(Task, pk=task_id, user=request.user)
+    if request.method == "POST":
+        task.delete()
+        return redirect("tasks")
+
+
+@login_required
 def signout(request):
     logout(request)
     return redirect("home")
@@ -70,6 +116,7 @@ def signin(request):
     return render(request, "signin.html", {"form": AuthenticationForm, "msg": msg})
 
 
+@login_required
 def create_task(request):
     msg = ""
     if request.method == "POST":

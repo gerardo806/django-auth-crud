@@ -1,21 +1,16 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 
 <h1>SignIn</h1>
 
 {% if msg %}
 <article>
-    <h2>{{msg}}</h2>
+  <h2>{{msg}}</h2>
 </article>
 {% endif %}
 
 <form method="post">
-    {% csrf_token %}
-    {{form.as_p}}
-    <button>
-        SignIn
-    </button>
+  {% csrf_token %} {{form.as_p}}
+  <button class="btn btn-primary">SignIn</button>
 </form>
 
 {% endblock %}
